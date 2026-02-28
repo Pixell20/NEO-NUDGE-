@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+
+      /* NEO-CORE ACTION BUTTONS */
+.neo-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    padding: 12px;
+    margin-top: 10px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px; /* Sharp but professional */
+}
+
+/* Specific Style for START_SYSTEM */
+#timer-toggle {
+    background: rgba(0, 242, 255, 0.05);
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+}
+
+#timer-toggle:hover {
+    background: var(--neon-cyan);
+    color: #000;
+    box-shadow: 0 0 20px var(--neon-cyan);
+}
+
+/* Specific Style for RESET_CORE */
+#timer-reset {
+    border-color: #444;
+    color: #666;
+    font-size: 11px;
+}
+
+#timer-reset:hover {
+    border-color: #ff4b4b;
+    color: #ff4b4b;
+    background: rgba(255, 75, 75, 0.1);
+}
+
+
+      /* NEO-TIMER CORE */
+.timer-container {
+    background: rgba(0, 242, 255, 0.02);
+    border: 1px solid rgba(0, 242, 255, 0.1);
+    padding: 30px;
+    border-radius: 15px;
+    margin: 20px 0;
+    box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+#clock {
+    font-family: 'Courier New', monospace; /* Digital terminal look */
+    font-size: 64px;
+    font-weight: 900;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 15px rgba(0, 242, 255, 0.6), 
+                 0 0 30px rgba(0, 242, 255, 0.2);
+    letter-spacing: -2px;
+    margin: 10px 0;
+}
+
+/* Subtle background scanline effect */
+.timer-container::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+}
+
+        :root {
+            --neon-cyan: #00f2ff;
+            --dark-bg: #0a0a0b;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            width: 350px;
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER & NAVIGATION --- */
+        .neo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(180deg, rgba(0, 242, 255, 0.1) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+        }
+        .header-logo { font-weight: 800; letter-spacing: 2px; color: #fff; }
+        .header-logo span { color: var(--neon-cyan); }
+
+        .tabs { display: flex; background: #000; border-bottom: 1px solid #333; }
+        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #666; font-size: 11px; }
+        .active-tab { color: var(--neon-cyan); border-bottom: 2px solid var(--neon-cyan); }
+
+        /* --- HINTS TAB SPECIFIC (Isolating Styles) --- */
+        #view-hints { padding: 15px; }
+
+        #view-hints .selector-container { margin-bottom: 20px; }
+
+        #view-hints .level-tag {
+            font-family: monospace;
+            font-size: 10px;
+            color: var(--neon-cyan);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        #view-hints #hint-selector {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 242, 255, 0.4);
+            border-left: 4px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 12px;
+            font-family: monospace;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        #view-hints .hint-card {
+            background: rgba(0, 242, 255, 0.03);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        #view-hints .hint-content { font-size: 16px; line-height: 1.5; color: #e0e0e0; }
+
+        .reveal-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* Utility */
+        .view { display: none; }
+
+    body { width: 350px; height: 500px; background: #050505; color: #00f2ff; font-family: monospace; padding: 15px; display: flex; flex-direction: column; }
+    .header { text-align: center; text-shadow: 0 0 10px #00f2ff; margin-bottom: 20px; font-weight: bold; }
+    
+    /* Navigation Bar */
+    .tabs { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px; }
+    .tab { cursor: pointer; color: #555; font-size: 11px; transition: 0.3s; }
+    .active-tab { color: #00f2ff; font-weight: bold; text-shadow: 0 0 5px #00f2ff; }
+
+    /* Content Views */
+    .view { display: none; flex-direction: column; flex: 1; }
+    .active-view { display: flex; }
+    
+    /* Styling for inner elements */
+    textarea { width: 100%; height: 320px; background: #000; color: #a7ff83; border: 1px solid #333; outline: none; resize: none; border-left: 4px solid #00f2ff; padding: 10px; }
+    #chat-box { flex: 1; background: #000; border: 1px solid #333; overflow-y: auto; padding: 10px; margin-bottom: 10px; font-size: 12px; }
+    input { background: #000; border: 1px solid #00f2ff; color: #00f2ff; padding: 10px; outline: none; }
+    .console-text { color: #a7ff83; font-size: 13px; line-height: 1.6; }
+  </style>
+</head>
+<div class="neo-header">
+    <div class="header-logo">NEO<span>.</span>NUDGE</div>
+    <div class="system-status">
+        <span class="status-dot"></span> SYSTEM_ACTIVE
+    </div>
+</div>
+<body>
+<div class="tabs">
+    <div id="btn-hints" class="tab active-tab">HINTS</div>
+    <div id="btn-timer" class="tab">TIMER</div>
+    <div id="btn-notes" class="tab">NOTES</div>
+    <div id="btn-chat" class="tab">CHAT</div>
+</div>
+
+ <div id="view-timer" class="view">
+    <div class="timer-container">
+        <div class="level-tag">SYS // NEURAL_CLOCK</div>
+        <div id="clock">20:00</div>
+        <div style="font-size: 10px; color: #444; letter-spacing: 3px;">BUFFER_ACTIVE</div>
+    </div>
+    
+    <button id="timer-toggle" class="neo-btn">START_SYSTEM</button>
+    <button id="timer-reset" class="neo-btn">RESET_CORE</button>
+</div>
+
+<div id="view-hints" class="view">
+    <style>
+        .purge-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255, 75, 75, 0.1); 
+            color: #ff4b4b; 
+            border: 1px solid #ff4b4b;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s all ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .purge-btn:hover {
+            background: #ff4b4b;
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 75, 75, 0.6); 
+        }
+    </style>
+
+    <select id="hint-selector" class="neo-input">
+        <option value="">-- SELECT CHALLENGE --</option>
+    </select>
+
+    <div id="hint-display" style="margin-top:15px;">
+        <p style="color: #555; text-align: center;">Select a challenge to initialize hints...</p>
+    </div>
+
+    <button id="btn-clear-hints" class="purge-btn">PURGE_HINT_BUFFER</button>
+</div>
+
+<div id="view-timer" class="view" style="display: none; flex-direction: column; align-items: center;">
+    <h1 id="clock" style="font-size: 3.5rem; color: #00f2ff;">20:00</h1>
+    
+    <div style="width: 100%; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+        <button id="timer-toggle" class="neo-btn">START_SYSTEM</button>
+        <button id="timer-reset" class="neo-btn" style="border-color: #f2ff00; color: #f2ff00;">RESET_SYSTEM</button>
+        <button id="btn-close-overlay" class="neo-btn" style="border-color: #ff4b4b; color: #ff4b4b;">CLOSE OVERLAY</button>
+    </div>
+</div>
+
+<div id="view-notes" class="view">
+  <textarea id="note-input" placeholder="SECURE_AUTOSAVE_ACTIVE..."></textarea>
+  
+  <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: center;">
+    <button id="btn-save-notes" style="flex: 1; background: #000; border: 1px solid #a7ff83; color: #a7ff83; padding: 10px; cursor: pointer; font-family: monospace;">
+        SAVE_TO_DISK
+    </button>
+    <button id="btn-clear-notes" style="flex: 1; background: #000; border: 1px solid #ff4b4b; color: #ff4b4b; padding: 10px; cursor: pointer; font-family: monospace;">
+        CLEAR_BUFFER
+    </button>
+  </div>
+</div>
+
+  <div id="view-chat" class="view">
+    <div id="chat-box"></div>
+    <input type="text" id="chat-input" placeholder="ENTER_CORE_QUERY...">
+  </div>
+
+
+  <script src="popup.js"></script>
+</body>
+</html>
